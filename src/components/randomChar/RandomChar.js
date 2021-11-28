@@ -18,7 +18,7 @@ class RandomChar extends Component {
 
     componentDidMount() {
         this.updateChar();
-        this.timerId = setInterval(this.updateChar, 30000);
+        // this.timerId = setInterval(this.updateChar, 30000);
     }
 
     componentWillUnmount() {
@@ -29,6 +29,12 @@ class RandomChar extends Component {
         this.setState({
             char: char,
             loading: false
+        })
+    }
+
+    onCharLoading = () => {
+        this.setState({
+            loading: true
         })
     }
 
@@ -43,6 +49,7 @@ class RandomChar extends Component {
     //метод для получения данных с серевера и записи в state
     updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
+        this.onCharLoading();//когда отправляется запрос на сервер и ждем ответ этот метод запускает спиннер
         this.marvelService
             .getCharacter(id)
             .then(this.onChatLoaded)
