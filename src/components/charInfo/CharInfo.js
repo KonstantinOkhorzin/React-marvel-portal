@@ -25,7 +25,6 @@ class CharInfo extends Component {
         if (this.props.charId !== prevProps.charId) { //если новый пропс не равен предыдущему
             this.updateChar(); //если запустить без условия запустится бесконечный цикл
         }
-
     }
 
 
