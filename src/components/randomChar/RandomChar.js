@@ -17,6 +17,11 @@ const RandomChar = () => {
 
     useEffect(() => {
         updateChar()
+        const timerId = setInterval(updateChar, 50000);
+
+        return () => {
+            clearInterval(timerId);
+        }
     }, [])
 
     //Функция для записи персонажа в состояние когда он загрузился
