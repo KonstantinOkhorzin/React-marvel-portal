@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import Spinner from '../spinner/Spinner';
+import ErrorMesssage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -9,6 +10,7 @@ const RandomChar = () => {
 
     const [char, setChar] = useState({});
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
 
     const marvelService = new MarvelService();
@@ -20,7 +22,13 @@ const RandomChar = () => {
     //Функция для записи персонажа в состояние когда он загрузился
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false)
+        setLoading(false);
+    }
+
+    //Функция для установки ошибки
+    const onError = () => {
+        setLoading(false);
+        setError(true);
     }
 
     //Функция для обновления персонажа
@@ -29,11 +37,18 @@ const RandomChar = () => {
         marvelService
             .getCharacter(id)
             .then(onCharLoaded)
-    }   
+            .catch(onError)
+    }  
+    
+    const errorMessage = error ? <ErrorMesssage/> : null;
+    const spinner = loading ? <Spinner/> : null;
+    const content = !(loading || error) ? <View char={char}/> : null;
 
     return (
         <div className="randomchar">
-            {loading ? <Spinner /> : <View char={char}/>}
+            {errorMessage}
+            {spinner}
+            {content}
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br />
