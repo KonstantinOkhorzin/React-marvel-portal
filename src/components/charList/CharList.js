@@ -6,7 +6,7 @@ import MarvelService from '../../services/MarvelService';
 
 import './charList.scss';
 
-const CharList = () => {
+const CharList = ({onCharSelected}) => {
 
     const [charList, setCharList] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -44,7 +44,8 @@ const CharList = () => {
             return (
                 <li 
                     className="char__item"
-                    key={item.id}>
+                    key={item.id}
+                    onClick={() => onCharSelected(item.id)}>
                         <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
                         <div className="char__name">{item.name}</div>
                 </li>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import Spinner from '../spinner/Spinner';
-import ErrorMesssage from '../errorMessage/ErrorMessage';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
 import './randomChar.scss';
 import mjolnir from '../../resources/img/mjolnir.png';
@@ -17,11 +17,11 @@ const RandomChar = () => {
 
     useEffect(() => {
         updateChar()
-        const timerId = setInterval(updateChar, 50000);
+        // const timerId = setInterval(updateChar, 50000);
 
-        return () => {
-            clearInterval(timerId);
-        }
+        // return () => {
+        //     clearInterval(timerId);
+        // }
     }, [])
 
     //Функция для записи персонажа в состояние когда он загрузился
@@ -51,7 +51,7 @@ const RandomChar = () => {
             .catch(onError)
     }  
     
-    const errorMessage = error ? <ErrorMesssage/> : null;
+    const errorMessage = error ? <ErrorMessage/> : null;
     const spinner = loading ? <Spinner/> : null;
     const content = !(loading || error) ? <View char={char}/> : null;
 
