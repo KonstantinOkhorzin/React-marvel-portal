@@ -30,6 +30,11 @@ const RandomChar = () => {
         setLoading(false);
     }
 
+    //Функция которая при загрузке персонажа показывает спинер
+    const onCharLoading = () => {
+        setLoading(true);
+    }
+
     //Функция для установки ошибки
     const onError = () => {
         setLoading(false);
@@ -39,6 +44,7 @@ const RandomChar = () => {
     //Функция для обновления персонажа
     const updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);//рандомное id персонажа
+        onCharLoading();
         marvelService
             .getCharacter(id)
             .then(onCharLoaded)
