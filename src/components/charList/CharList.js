@@ -11,13 +11,29 @@ const CharList = ({onCharSelected}) => {
     const [charList, setCharList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [newItemLoading, setNewItemLoading] = useState(false);//Загрузка новых персонажей
+    const [offset, setOffset] = useState(210);
 
     const marvelService = new MarvelService();
 
+    useEffect(() => {
+        onRequest();
+    }, [])
+
+    //Функция для запроса
+    const onRequest = (offset) => {
+        onCharListLoading();
+        marvelService.getAllCharacters(offset)
+        .then(onCharListLoaded)
+        .catch(onError)
+    }
+
     //Функция для записи персонажей в состояние когда они загрузилися
-    const onCharListLoaded = (charList) => {
-        setCharList(charList)
-        setLoading(false)
+    const onCharListLoaded = (newCharList) => {
+        setCharList(charList => [...charList, ...newCharList]);
+        setLoading(false);
+        setNewItemLoading(false);
+        setOffset(offset => offset + 9);
     }
 
     //Функция для установки ошибки
@@ -26,11 +42,10 @@ const CharList = ({onCharSelected}) => {
             setLoading(false)
     }
 
-    useEffect(() => {
-        marvelService.getAllCharacters()
-        .then(onCharListLoaded)
-        .catch(onError)
-    }, [])
+    //Функция которая показывает что запустилась дозагрузка персонажей
+    const onCharListLoading = () => {
+        setNewItemLoading(true);
+    }
 
     //Этот функция создана для оптимизации, чтобы не помещать такую конструкцию в return
     const renderItems = (arr) => {
@@ -71,7 +86,10 @@ const CharList = ({onCharSelected}) => {
                 {errorMessage}
                 {spinner}
                 {content}
-                <button className="button button__main button__long">
+                <button 
+                    className="button button__main button__long"
+                    disabled={newItemLoading}
+                    onClick={() => onRequest(offset)}>
                     <div className="inner">load more</div>
                 </button>
             </div>
