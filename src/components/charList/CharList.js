@@ -13,6 +13,7 @@ const CharList = ({onCharSelected}) => {
     const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);//Загрузка новых персонажей
     const [offset, setOffset] = useState(210);
+    const [charEnded, setCharEnded] = useState(false);
 
     const marvelService = new MarvelService();
 
@@ -30,10 +31,17 @@ const CharList = ({onCharSelected}) => {
 
     //Функция для записи персонажей в состояние когда они загрузилися
     const onCharListLoaded = (newCharList) => {
+
+        let ended = false;
+        if (newCharList.length < 9){
+            ended = true;
+        }
+
         setCharList(charList => [...charList, ...newCharList]);
         setLoading(false);
         setNewItemLoading(false);
         setOffset(offset => offset + 9);
+        setCharEnded(ended);
     }
 
     //Функция для установки ошибки
@@ -89,7 +97,8 @@ const CharList = ({onCharSelected}) => {
                 <button 
                     className="button button__main button__long"
                     disabled={newItemLoading}
-                    onClick={() => onRequest(offset)}>
+                    onClick={() => onRequest(offset)}
+                    style={{'display': charEnded ? 'none' : 'block'}}>
                     <div className="inner">load more</div>
                 </button>
             </div>
