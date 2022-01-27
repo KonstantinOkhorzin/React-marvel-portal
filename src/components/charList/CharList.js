@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -55,9 +55,17 @@ const CharList = ({onCharSelected}) => {
         setNewItemLoading(true);
     }
 
+    const itemRefs = useRef([]);
+
+    const focusOnItem = (id) => {
+        itemRefs.current.forEach(item => item.classList.remove('char__item_selected'));
+        itemRefs.current[id].classList.add('char__item_selected');
+        itemRefs.current[id].focus();
+    }
+
     //Этот функция создана для оптимизации, чтобы не помещать такую конструкцию в return
     const renderItems = (arr) => {
-        const items =  arr.map((item) => {
+        const items =  arr.map((item, i) => {
 
             let imgStyle = {'objectFit' : 'cover'};
             if (item.thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {
@@ -67,8 +75,19 @@ const CharList = ({onCharSelected}) => {
             return (
                 <li 
                     className="char__item"
+                    tabIndex={0}
+                    ref={el => itemRefs.current[i] = el}
                     key={item.id}
-                    onClick={() => onCharSelected(item.id)}>
+                    onClick={() => {
+                        onCharSelected(item.id);
+                        focusOnItem(i);
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            onCharSelected(item.id);
+                            focusOnItem(i);
+                        }
+                    }}>
                         <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
                         <div className="char__name">{item.name}</div>
                 </li>
