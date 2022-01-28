@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import propTypes from 'prop-types';
 
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Skeleton from '../skeleton/Skeleton';
@@ -12,10 +12,8 @@ import './charInfo.scss';
 const CharInfo = ({ charId }) => {
 
     const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
 
-    const marvelService = new MarvelService();
+    const {loading, error, getCharacter} = useMarvelService();
 
     useEffect(() => {
         updateChar()
@@ -27,29 +25,14 @@ const CharInfo = ({ charId }) => {
         if (!charId) {
             return;
         }
-        onCharLoading()//перед запросом показывается спинер
         //Если id есть отправляем запрос на сервер
-        marvelService
-            .getCharacter(charId)
+        getCharacter(charId)
             .then(onCharLoaded)
-            .catch(onError);
     }
 
     //Функция для записи персонажа в состояние когда он загрузился
     const onCharLoaded = (char) => {
         setChar(char);
-        setLoading(false);
-    }
-
-    //Функция которая при загрузке персонажа показывает спинер
-    const onCharLoading = () => {
-        setLoading(true);
-    }
-
-    //Функция для установки ошибки
-    const onError = () => {
-        setLoading(false);
-        setError(true);
     }
 
     const skeleton = char || loading || error ? null : <Skeleton/>; //Начальное состояние

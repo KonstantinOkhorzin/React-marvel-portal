@@ -2,31 +2,28 @@ import { useEffect, useState, useRef } from 'react';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 import './charList.scss';
 
 const CharList = ({onCharSelected}) => {
 
     const [charList, setCharList] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);//Загрузка новых персонажей
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const marvelService = new MarvelService();
+    const {loading, error, getAllCharacters} = useMarvelService();
 
     useEffect(() => {
-        onRequest();
+        onRequest(offset, true);
     }, [])
 
     //Функция для запроса
-    const onRequest = (offset) => {
-        onCharListLoading();
-        marvelService.getAllCharacters(offset)
+    const onRequest = (offset, initial) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true); // если initial = true то это первичная загрузка, если повторная initial = false
+         getAllCharacters(offset)
         .then(onCharListLoaded)
-        .catch(onError)
     }
 
     //Функция для записи персонажей в состояние когда они загрузилися
@@ -38,21 +35,9 @@ const CharList = ({onCharSelected}) => {
         }
 
         setCharList(charList => [...charList, ...newCharList]);
-        setLoading(false);
         setNewItemLoading(false);
         setOffset(offset => offset + 9);
         setCharEnded(ended);
-    }
-
-    //Функция для установки ошибки
-    const onError = () => {
-            setError(true)
-            setLoading(false)
-    }
-
-    //Функция которая показывает что запустилась дозагрузка персонажей
-    const onCharListLoading = () => {
-        setNewItemLoading(true);
     }
 
     const itemRefs = useRef([]);
@@ -105,14 +90,13 @@ const CharList = ({onCharSelected}) => {
         const items = renderItems(charList);
 
         const errorMessage = error ? <ErrorMessage/> : null;
-        const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error) ? items : null;
+        const spinner = loading && !newItemLoading ? <Spinner/> : null; //есть загрузка но это не загрузка новых персонажей
 
         return (
             <div className="char__list">
                 {errorMessage}
                 {spinner}
-                {content}
+                {items}
                 <button 
                     className="button button__main button__long"
                     disabled={newItemLoading}
