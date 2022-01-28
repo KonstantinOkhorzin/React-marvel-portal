@@ -13,7 +13,7 @@ const CharInfo = ({ charId }) => {
 
     const [char, setChar] = useState(null);
 
-    const {loading, error, getCharacter} = useMarvelService();
+    const {loading, error, getCharacter, clearError} = useMarvelService();
 
     useEffect(() => {
         updateChar()
@@ -25,6 +25,7 @@ const CharInfo = ({ charId }) => {
         if (!charId) {
             return;
         }
+        clearError();
         //Если id есть отправляем запрос на сервер
         getCharacter(charId)
             .then(onCharLoaded)
