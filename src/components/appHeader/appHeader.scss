@@ -26,6 +26,9 @@
                     color: $main-color;
                 }
             }
+            li .active {
+                color: $main-color;
+            }
         }
     }
 }
